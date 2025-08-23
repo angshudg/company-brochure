@@ -1,5 +1,7 @@
 requests
-python-dotenv
 beautifulsoup4
-openai
-streamlit
+trafilatura
+newspaper3k
+altair==4.2.2
+streamlit==1.37.0
+openai>=1.30.0
