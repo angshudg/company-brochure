@@ -156,17 +156,19 @@ if st.button("Generate Brochure"):
                 stream=True,
             )
             response = ""
+            # placeholder = st.empty()
             for chunk in stream:
-                if hasattr(chunk.choices[0].delta, "content"):
-                    token = chunk.choices[0].delta.content or ""
-                    response += token
-                    st.write(token, end="")
-                    # yield token
+                # if hasattr(chunk.choices[0].delta, "content"):
+                token = chunk.choices[0].delta.content or ""
+                response += token
+                # st.write(token, end="")
+                yield token
             # Save full brochure in memory
             st.session_state.brochure_text = response
             st.session_state.company_raw_info = all_details
         with st.spinner("Fetching details and generating brochure... ⏳"):
-            stream_generator()
+            st.write_stream(stream_generator)
+        st.rerun()
 
 # -------------------------------
 # Follow-up Q&A from memory
@@ -229,5 +231,6 @@ Brochure text:
 
             # Trigger rerun so the new Q&A appears above the input box
             st.rerun()
+
 
 
