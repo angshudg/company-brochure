@@ -132,6 +132,8 @@ url = st.text_input("Enter the company website URL", placeholder="https://huggin
 
 if "brochure_text" not in st.session_state:
     st.session_state.brochure_text = None
+if "company_raw_info" not in st.session_state:
+    st.session_state.company_raw_info = None
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 
@@ -159,7 +161,8 @@ if st.button("Generate Brochure"):
                 response += token
                 yield token
             # Save full brochure in memory
-            st.session_state.brochure_text = all_details
+            st.session_state.brochure_text = response
+            st.session_state.company_raw_info = all_details
         with st.spinner("Fetching details and generating brochure... ⏳"):
             st.write_stream(stream_generator)
 
@@ -167,7 +170,7 @@ if st.button("Generate Brochure"):
 # Follow-up Q&A from memory
 # -------------------------------
 if st.session_state.brochure_text:
-    st.subheader("Generated Brochure")
+    # st.subheader("Generated Brochure")
     st.markdown(st.session_state.brochure_text)
 
     st.subheader("Company Q&A Chatbot")
@@ -191,7 +194,7 @@ If the answer is not in the brochure, say that the fetched information does not 
 Do not make up facts.
 
 Brochure text:
-{st.session_state.brochure_text}
+{st.session_state.company_raw_info}
 """
             # Append question immediately with empty answer placeholder
             st.session_state.chat_history.append({"q": user_q, "a": ""})
@@ -226,3 +229,4 @@ Brochure text:
 
             # Trigger rerun so the new Q&A appears above the input box
             st.rerun()
+
