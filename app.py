@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 from openai import OpenAI
 import requests, json
 from bs4 import BeautifulSoup
@@ -137,6 +138,17 @@ if "company_raw_info" not in st.session_state:
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 
+def keep_scroll_at_bottom():
+    components.html(
+        """
+        <script>
+        var body = window.parent.document.querySelector(".main");
+        body.scrollTo(0, body.scrollHeight);
+        </script>
+        """,
+        height=0,
+    )
+
 if st.button("Generate Brochure"):
     if not api_key:
         st.error("Please enter your API key.")
@@ -156,13 +168,14 @@ if st.button("Generate Brochure"):
                 stream=True,
             )
             response = ""
-            # placeholder = st.empty()
+            placeholder = st.empty()
             for chunk in stream:
                 # if hasattr(chunk.choices[0].delta, "content"):
                 token = chunk.choices[0].delta.content or ""
                 response += token
-                # st.write(token, end="")
-                yield token
+                placeholder.markdown(response)
+                keep_scroll_at_bottom()
+                # yield token
             # Save full brochure in memory
             st.session_state.brochure_text = response
             st.session_state.company_raw_info = all_details
@@ -231,6 +244,7 @@ Brochure text:
 
             # Trigger rerun so the new Q&A appears above the input box
             st.rerun()
+
 
 
 
